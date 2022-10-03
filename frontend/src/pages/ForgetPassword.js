@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Input, Button, Row, Col } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'antd/lib/form/Form';
-import { useAuth } from '../AuthContext';
+import { useNavigate  } from "react-router-dom";
+import { Form,  Button, } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { forgotPasswordService } from '../service/forgotPasswordService';
 
@@ -14,11 +12,15 @@ const STATUS = {
 
 function ForgetPassword() {
   const { t } = useTranslation()
-  const navigate = useNavigate();
+  const navigate  = useNavigate ();
   const [form] = Form.useForm();
   const [error, setError] = useState('');
   const [countdown, setCountdown] = useState()
   const [passwordIsEmpty, setpasswordIsEmpty] = useState(true);
+
+  const goToLogin= ()=> {
+    navigate("/login");
+  }
 
   const INITIAL_COUNT = 60
 
@@ -70,7 +72,7 @@ function ForgetPassword() {
           onFinish={(values) => {
             setError('');
             const {loginId, newPassword, otp} = values;
-            forgotPasswordService.updatePassword(loginId, newPassword, otp);
+            forgotPasswordService.updatePassword(loginId, newPassword, otp, setError, goToLogin);
 
           }}
         >

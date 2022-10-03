@@ -100,11 +100,16 @@ function allowSendOtp(loginId, showNewPassArea) {
     });
 }
 
-function updatePassword(loginId, password, otp) {
+function updatePassword(loginId, password, otp, showError, goToLogin) {
   const url = 'api/updatepassword';
   axios
   .post(url, { loginId: loginId, password: password, otp: otp })
     .then((res) => {
-      console.log(res);
+      if(res.data.status){
+        goToLogin();
+      }
+      else{
+        showError(res.data.message);
+      }
     });
 }

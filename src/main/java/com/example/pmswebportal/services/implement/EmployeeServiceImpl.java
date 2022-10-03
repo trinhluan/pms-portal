@@ -232,7 +232,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = checkAuthenticated(loginId);
         if (employee == null)
             return false;
-        int min = 0;
+        int min = 10000;
         int max = 999999;
         // generate otp 6 digit
         int otp = (int) Math.floor(Math.random() * (max - min + 1) + min);
@@ -299,10 +299,15 @@ public class EmployeeServiceImpl implements EmployeeService {
             return updatePassReponse;
         }
 
-        String md5Pass = new BCryptPasswordEncoder().encode(info.getPassword());
+        if(!sysOtp.getFldOTP().equals(info.getOtp())){
+            updatePassReponse.setStatus(false);
+            updatePassReponse.setMessage("OTP is incorrect");
+            return updatePassReponse;
+        }
+        
         HashMap<String, Object> policy = securityPolicyService.getSecurityPolicy();
         if (policy.get("fldSecPCP").toString().toUpperCase().equals("YES") && (int) policy.get("fldPwdMPRT") == 1) {
-            boolean check = (md5Pass == employee.getFldEmpPwd());
+            boolean check = new BCryptPasswordEncoder().matches(info.getPassword(), employee.getFldEmpPwd());
             if (check) {
                 updatePassReponse.setStatus(false);
                 updatePassReponse.setMessage("Cannot be the same as pervious");
@@ -322,7 +327,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         }
         //save pass
-        employee.setFldEmpPwd(md5Pass);
+        employee.setFldEmpPwd(new BCryptPasswordEncoder().encode(info.getPassword()));
+        employeeRepository.save(employee);
         updatePassReponse.setStatus(true);
         return updatePassReponse;
     }
