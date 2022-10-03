@@ -31,8 +31,8 @@ axios.interceptors.response.use(
   },
   function (error) {
     document.body.classList.remove('loading');
-    if (!error?.response || error.response.status === 401) {
-      window.location.href = '/login';
+    if (!error?.response || (error.response.status === 401 && (error?.request?.responseURL.indexOf('/login') || -1) === -1)) {
+      window.location.href = './login';
     }
     if ((error?.request?.responseURL.indexOf('/login') || -1) === -1) {
       openNotification(error?.response?.data || error?.data);

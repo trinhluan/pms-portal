@@ -3,6 +3,7 @@ import { useNavigate  } from "react-router-dom";
 import { Form,  Button, } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { forgotPasswordService } from '../service/forgotPasswordService';
+import $ from 'jquery';
 
 
 const STATUS = {
@@ -22,7 +23,7 @@ function ForgetPassword() {
     navigate("/login");
   }
 
-  const INITIAL_COUNT = 60
+  
 
   const onChangePass = (obj) => {
     if (obj.target.value) {
@@ -104,11 +105,12 @@ function ForgetPassword() {
                 htmlType="button"
                 onClick={async () => {
                   try {
+                    const siteInfo = JSON.parse($("#allInfoApp")[0].value);
                     const {loginId} = await form.validateFields(['loginId']);
                     const showNewPassArea = () => {
                       setCountdown({
                         status: STATUS.STARTED,
-                        secondsRemaining: INITIAL_COUNT
+                        secondsRemaining: siteInfo.countdownOtp
                       })
                     };
                     setError('');

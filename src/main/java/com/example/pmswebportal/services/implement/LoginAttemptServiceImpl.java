@@ -90,9 +90,8 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
     }
 
     private boolean hasReachedLoginAttemptLimit(LoginAttempts loginAttempt) {
-        System.out.println(securityPolicyService.getSecurityPolicy().size());
         
-        return loginAttempt.getAttempts() >= maxLoginFailedAttempts;
+        return loginAttempt.getAttempts() >= Long.parseLong(securityPolicyService.getSecurityPolicy().getOrDefault("fldSecMLA", maxLoginFailedAttempts).toString());
     }
 
 }

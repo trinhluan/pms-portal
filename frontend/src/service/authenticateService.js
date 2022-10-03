@@ -13,7 +13,7 @@ function login(loginId, password, callback) {
       callback(res.data);
     })
     .catch((error) => {
-      callback({ error: { status: error.response.status } });
+      callback({ error: { status: error.response.status, message: error.response.data.message } });
     });
 }
 function logout(page) {

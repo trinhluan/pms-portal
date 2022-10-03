@@ -52,7 +52,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 ObjectMapper objectMapper = new ObjectMapper();
                 response.setStatus(org.springframework.http.HttpStatus.FORBIDDEN.value());
                 response.setContentType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE);
-                objectMapper.writeValue(response.getWriter(), Collections.singletonMap("errorCode", "TOO_MANY_LOGIN_ATTEMPTS"));
+                objectMapper.writeValue(response.getWriter(), Collections.singletonMap("message", "Too many attempts"));
                 response.getWriter().flush();
                 response.flushBuffer();
                 return;

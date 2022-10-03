@@ -23,7 +23,7 @@ function Login() {
             onFinish={(values) => {
               auth.signin(values.loginId, values.password, (data) => {
                 if (data.error) {
-                  setError(t('login.wrongPassword'));
+                  setError(t(data.error.message));
                 } else {
                   navigate('/', { replace: true });
                 }
@@ -34,7 +34,11 @@ function Login() {
           <span className='login-form-title p-b-32'>
            {t('Account Login')}
           </span>
-          <div  className='alert alert-danger'>Access Denied</div>
+         {
+          (error ?? '') !== '' && (
+              <div  className='alert alert-danger'>{error}</div>
+          )
+         } 
           <span class='txt1 p-b-11 required'>
             {t('Login ID')}
           </span>

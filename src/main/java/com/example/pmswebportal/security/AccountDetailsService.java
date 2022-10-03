@@ -27,7 +27,7 @@ public class AccountDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
         Employee employee = employeeService.checkAuthenticated(loginId);
         if(employee == null) {
-            throw new UsernameNotFoundException("Employee not found with loginId: " + loginId);
+            throw new UsernameNotFoundException("");
         }
         return new CustomAccountDetail(employee);
     }
