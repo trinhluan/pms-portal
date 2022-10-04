@@ -4,61 +4,6 @@
 }
 
 
-/*
-The loaders use CSS custom properties (variables) to control the attributes of the loaders
-*/
-:root{
-	--loader-width: 70px;
-	--loader-height: 70px;
-	--loader-color-primary: #27ae60;
-	--loader-color-secondary: #eee;
-	--line-width: 3px;
-	--animation-duration: 2s;
-	--loader-initial-scale: 0.1;
-}
-.loader,.loader:before,.loader:after{
-	box-sizing: border-box;
-	flex-grow: 0;
-	flex-shrink: 0;
-}
-/*
-In order to get optimal results, please only change the 
-variables above and don't change anything in the actual loader code
-*/
-	
-	
-
-.loader.double-circle {
-    position: relative;
-    width: var(--loader-width, 100px);
-    height: var(--loader-height, 100px);
-}
-
-.double-circle::before,
-.double-circle::after{
-    content: '';
-    display: block;
-    position: absolute;
-    border-radius: 50%;
-    border: var(--line-width, 4px) solid transparent;
-    border-bottom-color: var(--loader-color-primary, #33f);
-    animation: circle-loader var(--animation-duration, 1s) infinite linear ;
-}
-
-.double-circle::before{
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-}
-
-.double-circle::after{
-    width: calc(100% - 12px);
-    height: calc(100% - 12px);
-    top: 6px;
-    left: 6px;
-    animation-direction: reverse;
-}
 
 /* home page */
 .col-left,
