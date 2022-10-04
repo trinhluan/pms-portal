@@ -9,7 +9,7 @@ function Home() {
   const {user} = useAuth();
   const navigate = useNavigate();
   useEffect(()=>{
-    if(user?.employee?.fldHomePage) {
+    if(user?.employee?.fldHomePage && user?.employee?.fldHomePage !== '#' ) {
       navigate(user?.employee?.fldHomePage, { replace: true });
     }
   },[])

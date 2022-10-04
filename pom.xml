@@ -12,6 +12,7 @@
 	<artifactId>pms-web-portal</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>pms-web-portal</name>
+	<packaging>war</packaging>
 	<description>Demo PMS Web Portal</description>
 	<properties>
 		<java.version>1.8</java.version>
@@ -93,6 +94,7 @@
 	
 
 	<build>
+		<finalName>pms-portal</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

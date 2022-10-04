@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,10 +17,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.example.pmswebportal.dto.EmployeeResponse;
+import com.example.pmswebportal.dto.LoginResponse;
 import com.example.pmswebportal.utilities.HttpReqRespUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,9 +35,12 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -55,9 +63,6 @@ public class WebSecurityConfig {
 
     @Bean
     AuthenticationManager configProviders(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        // authenticationManagerBuilder.authenticationProvider(usernamePasswordAuthenticationProvider());
-        // authenticationManagerBuilder.authenticationProvider(smsAuthenticationProvider());
-        // authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -65,15 +70,42 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/login", "/api/login", "/api/searchEmployee", "/api/translations", "/api/forgotpassword",
-                        "/api/allSites", "/api/detailEmployee", "/api/getDataSercurityGroupList",
-                        "/api/getFuncSecurityGroupList", "/api/getServiceTypeList", "/api/getpropertiesofsite",
-                        "/api/finduserbyloginid", "/api/sendmailotp", "/api/addEmployee", "/api/updateEmployee",
-                        "/api/updateMyprofile","/api/updatepassword",
+                .antMatchers("/login", "/api/translations", "/api/forgotpassword", "/api/getpropertiesofsite",
+                        "/api/finduserbyloginid", "/api/sendmailotp", "/api/updatepassword",
                         "/assets/**", "/manifest.json", "/favicon.ico", "/static/**")
                 .permitAll()
                 .anyRequest().authenticated()
-                .and().formLogin().loginPage("/login")
+                .and().formLogin().loginPage("/login").successHandler(new AuthenticationSuccessHandler() {
+                    @Override
+                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                            Authentication authentication) throws IOException, ServletException {
+                        LoginResponse loginResponse = new LoginResponse();
+
+                        CustomAccountDetail account = (CustomAccountDetail) authentication.getPrincipal();
+                        EmployeeResponse employeeResponse = new EmployeeResponse();
+                        BeanUtils.copyProperties(account.getEmployee(), employeeResponse);
+                        loginResponse.setEmployee(employeeResponse);
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        response.setStatus(org.springframework.http.HttpStatus.OK.value());
+                        response.setContentType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE);
+                        objectMapper.writeValue(response.getWriter(),
+                                account);
+                        response.getWriter().flush();
+
+                    }
+                }).failureHandler(new AuthenticationFailureHandler() {
+                    @Override
+                    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+                            AuthenticationException exception) throws IOException, ServletException {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        response.setStatus(org.springframework.http.HttpStatus.UNAUTHORIZED.value());
+                        response.setContentType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE);
+                        objectMapper.writeValue(response.getWriter(),
+                                Collections.singletonMap("message", "Invalid Login ID or Password"));
+                        response.getWriter().flush();
+                    }
+                })
+                .and().rememberMe().key("uniqueAndSecret").tokenValiditySeconds(1296000)
                 .and().logout().logoutUrl("/logout").logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
                 .logoutSuccessHandler(new LogoutSuccessHandler() {
                     @Override
@@ -109,8 +141,6 @@ public class WebSecurityConfig {
 
                             }
                         });
-
-                        response.sendRedirect("/login");
                     }
                 });
         return http.build();

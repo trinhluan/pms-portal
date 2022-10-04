@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Select, Row, Col, Divider } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from '../service/interceptor';
-import { YES_NO_CONST, LANGUAGE_EDIT, HOME_PAGE, STATUS } from '../constant';
+import { HOME_PAGE, LANGUAGE } from '../constant';
 import { useTranslation } from 'react-i18next';
 import NavBarMenu from '../components/NavBarMenu';
 import { useAuth } from '../AuthContext';
+import Footer from '../components/Footer';
 
 function Login() {
   const [form] = Form.useForm();
   const {user} = useAuth();
   const { t } = useTranslation()
   const navigate = useNavigate();
+  const [msg, setMsg] = useState("");
 
   useEffect(() => {
 
@@ -34,22 +36,30 @@ function Login() {
       .post("/api/updateMyprofile", 
         form.getFieldsValue()
       )
-      .then(() => {
-        // navigate("/myProfile")
+      .then((res) => {
+        if(!res.data.status){
+          setMsg(res.data.message);
+        } else {
+          setMsg("Profile has been changed!");
+        }
       });
   };
 
+  const a = HOME_PAGE;
+  console.log(a);
   return (
     <>
       <NavBarMenu/>
       <div className="container">
         <span className='page-title'>{t('My Profile')}</span>
-        <div className='search-criteria'>
+        <div className='wrap-login wrap-border'>
+          <div className='alert alert-danger' style={{ visibility: msg ? 'visible' : 'hidden' }}>{msg}</div>
           <Form
             name="frmSearchEmpl"
             form={form}
             autoComplete="off"
             onFinish={() => {
+              setMsg("");
               saveEmployee();
             }}
           >
@@ -58,62 +68,62 @@ function Login() {
               <Col md={{ span: 24 }}>
                 <Row className='border-default-search'>
                   <Col md={{ span: 6 }} className="label-search-ui">
-                    <div>{t('Login Name')}</div>
+                    <div className='required'>{t('Login Name')}</div>
                   </Col>
                   <Col md={{ span: 12 }} className="modal-primary">
                     <Form.Item name="fldEmpLoginID" rules={[
                       {
                         required: true,
-                        message: t('Login Name') + t('share.error.notEntered')
+                        message: t('Field cannot be empty')
                       }
                     ]}>
-                      <Input className="txt-search" />
+                      <Input />
                     </Form.Item>
                   </Col>
                 </Row>
 
                 <Row className='border-default-search'>
                   <Col md={{ span: 6 }} className="label-search-ui">
-                    <div>{t('User Name')}</div>
+                    <div  className='required'>{t('User Name')}</div>
                   </Col>
                   <Col md={{ span: 12 }} className="modal-primary">
                     <Form.Item name="fldEmpName" rules={[
                       {
                         required: true,
-                        message: t('User Name') + t('share.error.notEntered')
+                        message: t('Field cannot be empty')
                       }
                     ]}>
-                      <Input className="txt-search" />
+                      <Input />
                     </Form.Item>
                   </Col>
                 </Row>
 
                 <Row className='border-default-search'>
                   <Col md={{ span: 6 }} className="label-search-ui">
-                    <div>{t('Email')}</div>
+                    <div className='required'>{t('Email')}</div>
                   </Col>
                   <Col md={{ span: 12 }} className="modal-primary">
                     <Form.Item name="fldEmpEmail" rules={[
                       {
                         required: true,
-                        message: t('Email') + t('share.error.notEntered')
+                        message: t('Field cannot be empty')
                       }
                     ]}>
-                      <Input className="txt-search" />
+                      <Input />
                     </Form.Item>
                   </Col>
                 </Row>
 
                 <Row className='border-default-search'>
-                  <Col md={{ span: 6 }} className="label-search-ui">{t('Preferred Language')}</Col>
+                  <Col md={{ span: 6 }} className="label-search-ui required">{t('Preferred Language')}</Col>
                   <Col className="modal-primary" md={{ span: 12 }}>
                     <Form.Item name="fldPreferredLang" rules={[
                       {
                         required: true,
-                        message: t('Preferred Language') + t('share.error.notEntered')
+                        message: t('Field cannot be empty')
                       }
                     ]}>
-                      <Select defaultValue={LANGUAGE_EDIT[0]} className="sel-search" options={LANGUAGE_EDIT} />
+                      <Select defaultValue={LANGUAGE[1]} options={LANGUAGE.filter((_, idx)=> idx !== 0)} />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -121,13 +131,8 @@ function Login() {
                 <Row className='border-default-search'>
                   <Col md={{ span: 6 }} className="label-search-ui">{t('Home Page')}</Col>
                   <Col className="modal-primary" md={{ span: 12 }}>
-                    <Form.Item name="fldHomePage" rules={[
-                      {
-                        required: true,
-                        message: t('Home Page') + t('share.error.notEntered')
-                      }
-                    ]}>
-                      <Select className="sel-search" defaultValue={'---'} options={HOME_PAGE} />
+                    <Form.Item name="fldHomePage">
+                      <Select  options={HOME_PAGE} />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -135,7 +140,7 @@ function Login() {
               </Col>
             </Row>
 
-            <Divider style={{'background-color':'blue'}} />
+            <Divider />
 
             <Row className="mb-primary">
               <Col md={{ span: 24 }}>
@@ -145,12 +150,16 @@ function Login() {
                   </Col>
                   <Col md={{ span: 12 }} className="modal-primary">
                     <Form.Item name="empOldPwd" rules={[
-                      {
-                        required: true,
-                        message: t('Old Password') + t('share.error.notEntered')
-                      }
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (!value && getFieldValue('empNewPwd')) {
+                            return Promise.reject(new Error(t('Old Password') + t('share.error.notEntered')));
+                          }
+                          return Promise.resolve();
+                        },
+                      }),
                     ]}>
-                      <Input className="txt-search" type='password' />
+                      <Input type='password' />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -160,13 +169,8 @@ function Login() {
                     <div>{t('New Password')}</div>
                   </Col>
                   <Col md={{ span: 12 }} className="modal-primary">
-                    <Form.Item name="empNewPwd" rules={[
-                      {
-                        required: true,
-                        message: t('New Password') + t('share.error.notEntered')
-                      }
-                    ]}>
-                      <Input className="txt-search" type='password' />
+                    <Form.Item name="empNewPwd">
+                      <Input type='password' />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -177,10 +181,6 @@ function Login() {
                   </Col>
                   <Col md={{ span: 12 }} className="modal-primary">
                     <Form.Item name="empConfirmNewPwd" rules={[
-                      {
-                        required: true,
-                        message: t('Confirm Password') + t('share.error.notEntered')
-                      },
                       ({ getFieldValue }) => ({
                         validator(_, value) {
                           if (!value || getFieldValue('empNewPwd') === value) {
@@ -190,25 +190,25 @@ function Login() {
                         },
                       }),
                     ]}>
-                      <Input type='password' className="txt-search" />
+                      <Input type='password' />
                     </Form.Item>
                   </Col>
                 </Row>
               </Col>
             </Row>
 
-            <Divider style={{'background-color':'blue'}} />
+            <Divider />
 
             <Col md={{ span: 24 }}>
               <Row className='border-default-search p-5'>
                 <Col md={{ span: 6 }}>
                 </Col>
                 <Col md={{ span: 6 }}>
-                  <Button className="btn-primary btn-search" htmlType='submit'>
+                  <Button className="btn-primary btn-search btn" htmlType='submit'>
                     {t('Save')}
                   </Button>
                   {' '}
-                  <Button className="btn-primary btn-search" 
+                  <Button className="btn-primary btn-search btn" 
                     onClick={() => {
                       navigate("/")
                     }} >
@@ -221,6 +221,7 @@ function Login() {
           </Form>
         </div>
       </div>
+      <Footer/>
     </>
   );
 }

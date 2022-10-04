@@ -26,7 +26,7 @@ function validatorPassword({ getFieldValue }) {
       if (secPCP !== 'Yes')
         return Promise.resolve();
       if (value.length < pwdMinLen)
-        return Promise.reject(new Error('min length is ' + pwdMinLen));
+        return Promise.reject(new Error('Must be 8 characters or more' ));
       if (pwdConUCC && pwdConUCC.toUpperCase() === 'YES') {
         const arr = Array.from(value);
         const format = /^[a-zA-Z]+$/;
@@ -34,7 +34,7 @@ function validatorPassword({ getFieldValue }) {
           return (format.test(e) && e.toUpperCase() === e);
         });
         if (!checkUcc) {
-          return Promise.reject(new Error('mật khẩu phải có ít nhất 1 ký tự viết hoa'));
+          return Promise.reject(new Error('Must contain atleast one UPPER CASE character'));
         }
       }
       if (pwdConLCC && pwdConLCC.toUpperCase() === 'YES') {
@@ -44,7 +44,7 @@ function validatorPassword({ getFieldValue }) {
           return (format.test(e) && e.toLowerCase() === e);
         });
         if (!checkLcc) {
-          return Promise.reject(new Error('mật khẩu phải có ít nhất 1 ký tự viết thường'));
+          return Promise.reject(new Error('Must contain atleast one LOWER CASE character'));
         }
       }
       if (pwdConNC && pwdConNC.toUpperCase() === 'YES') {
@@ -53,21 +53,21 @@ function validatorPassword({ getFieldValue }) {
           return !isNaN(e);
         });
         if (!checkConNC) {
-          return Promise.reject(new Error('mật khẩu phải có ít nhất 1 ký tự là số'));
+          return Promise.reject(new Error('Must contain atleast one digit character'));
         }
       }
       if (pwdConSC && pwdConSC.toUpperCase() === 'YES') {
         const format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
         const checkConSC = format.test(value);
         if (!checkConSC) {
-          return Promise.reject(new Error('mật khẩu phải có ít nhất 1 ký tự đặc biệt'));
+          return Promise.reject(new Error('Must contain atleast one special character'));
         }
       }
       if (pwdNotUN && pwdNotUN.toUpperCase() === 'YES') {
         const loginID = getFieldValue('loginId');
         const checkNotUN = loginID === value;
         if (checkNotUN) {
-          return Promise.reject(new Error('mật khẩu không được trùng với Login ID'));
+          return Promise.reject(new Error('Do not use your Login ID as password'));
         }
       }
       return Promise.resolve();

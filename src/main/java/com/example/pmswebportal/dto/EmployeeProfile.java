@@ -25,6 +25,9 @@ public class EmployeeProfile {
     private String fldPreferredLang;
 
     /** */
+    private String empOldPwd;
+
+    /** */
     private String empNewPwd;
 
     /** */

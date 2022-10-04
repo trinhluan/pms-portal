@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Select} from 'antd';
+import { Form, Input, Button, Select, Pagination} from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from '../service/interceptor';
-import { ALLOW_LOGIN, LANGUAGE, STATUS } from '../constant';
+import { ALLOW_LOGIN, LANGUAGE, LANG_DIC, STATUS } from '../constant';
 import { useTranslation } from 'react-i18next';
 import NavBarMenu from '../components/NavBarMenu';
 import Footer from '../components/Footer';
@@ -13,10 +13,24 @@ function Login() {
   const navigate = useNavigate();
   const [employeeList, setEmployeeList] = useState([]);
   const [siteList, setSiteList] = useState([]);
+  const pageSize = 10;
+
+  const [pagingValue, setPagingValue] = useState({
+    totalPage: 0,
+    current: 1,
+    minIndex: 0,
+    maxIndex: 0
+ });
 
   useEffect(() => {
     getAllSites();
     getAllEmployee({});
+    setPagingValue({
+      ...pagingValue,
+      totalPage: employeeList?.length / pageSize,
+      minIndex: 0,
+      maxIndex: pageSize
+    });
   }, []);
 
   const getAllEmployee = (params) => {
@@ -47,11 +61,23 @@ function Login() {
       });
   };
 
+  const handleChange = (page) => {
+    let data = form.getFieldsValue()
+    let params = {data};
+    getAllEmployee(params);
+    setPagingValue({
+      ...pagingValue,
+      current: page,
+      minIndex: (page - 1) * pageSize,
+      maxIndex: page * pageSize
+    });
+  };
+
   return (
     <>
     <NavBarMenu/>
     <div className='container'>
-      <span className='page-title'>User Profile Maintenance</span>
+      <span className='page-title'>{t('User Profile Maintenance')}</span>
       <div className='search-criteria'>
         <span className='criteria-label'>{t('Search Criteria')}</span>
         <Form
@@ -142,9 +168,25 @@ function Login() {
        
       </div>
       <div>
-          <Button className="btn-create" onClick={() => { navigate("/detailEmployee") }}>
-              {t('Create')}
-          </Button>
+        <table className="table-parent">
+          <tr>
+            <td style={{width: "50%"}}>
+              <Button className="btn-create" onClick={() => { navigate("/detailEmployee") }}>
+                {t('Create')}
+              </Button>
+            </td>
+            <td>
+              <Pagination
+                pageSize={pageSize}
+                current={pagingValue.current}
+                total={employeeList?.length}
+                onChange={handleChange}
+                style={{ bottom: "0px" }}
+              />
+            </td>
+          </tr>
+        </table>
+
       </div>
       <div className='search-result'>
         <table className="table-parent border-default">
@@ -159,8 +201,10 @@ function Login() {
             <th class="border-default">{t('Is Patrol Staff')}</th>
           </thead>
           <tbody>
-            {employeeList.map((row) => {
+            {employeeList?.map((row, index) => {
               return (
+                index >= pagingValue.minIndex &&
+                index < pagingValue.maxIndex && 
                 <tr>
                   <td className="vertical-align-top text-center border-default">
                     {' '}
@@ -170,7 +214,7 @@ function Login() {
                         search: `?fldEmpNo=${row.fldEmpNo}`
                       }}
                     >
-                      Edit
+                      {t('Edit')}
                     </Link>
                   </td>
                   <td className="vertical-align-top border-default">
@@ -186,7 +230,7 @@ function Login() {
                     {row.fldAllowLogIn}
                   </td>
                   <td className="vertical-align-top border-default">
-                    {row.fldPreferredLang}
+                    {LANG_DIC[row.fldPreferredLang]}
                   </td>
                   <td className="vertical-align-top border-default">
                     {row.fldRespPersonTech}
