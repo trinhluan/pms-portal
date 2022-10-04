@@ -15,17 +15,10 @@ import org.springframework.web.context.request.WebRequest;
 public class ApiExceptionHandler {
 
     Logger logger = LogManager.getLogger(getClass());
-    
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleAllException(Exception ex, WebRequest request) {
         return ex.getLocalizedMessage();
-    }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-    public Object handleAuthException(Exception ex, WebRequest request) {
-        logger.error("cddđ", ex);
-        return Collections.singletonMap("message", "Invalid Login ID or Password");
     }
 }

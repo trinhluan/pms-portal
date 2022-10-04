@@ -5,10 +5,10 @@ export const authenticateService = {
   logout,
   currentUser
 };
-function login(loginId, password, callback) {
-  const url = '/api/login';
+function login(param, callback) {
+  const url = '/login';
   axios
-    .post(url, { loginId: loginId, password: password })
+    .post(url, new URLSearchParams(param))
     .then((res) => {
       callback(res.data);
     })

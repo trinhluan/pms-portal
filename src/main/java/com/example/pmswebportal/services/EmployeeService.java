@@ -1,7 +1,9 @@
 package com.example.pmswebportal.services;
 
 import com.example.pmswebportal.dto.EmployeeDetail;
+import com.example.pmswebportal.dto.EmployeeDetailReponse;
 import com.example.pmswebportal.dto.EmployeeProfile;
+import com.example.pmswebportal.dto.MyprofileReponse;
 import com.example.pmswebportal.dto.UpdatePassReponse;
 import com.example.pmswebportal.dto.UpdatePassReq;
 import com.example.pmswebportal.model.Employee;
@@ -47,7 +49,7 @@ public interface EmployeeService {
      * 
      * @param employee
      */
-    void registerEmployee(EmployeeDetail employee);
+    EmployeeDetailReponse registerEmployee(EmployeeDetail employee);
 
     /**
      * Send OPT to email of user
@@ -62,9 +64,15 @@ public interface EmployeeService {
      * 
      * @param employee
      */
-    void updateEmployee(EmployeeDetail employee);
+    EmployeeDetailReponse updateEmployee(EmployeeDetail employee);
 
-    public void updateProfile(EmployeeProfile employeeProfile);
+    /**
+     * Updte my profile
+     * 
+     * @param employeeProfile
+     * @return
+     */
+    public MyprofileReponse updateProfile(EmployeeProfile employeeProfile);
 
     /**
      * Update Password

@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 import com.example.pmswebportal.constants.AppConstants;
 import com.example.pmswebportal.dto.EmailDetail;
 import com.example.pmswebportal.dto.EmployeeDetail;
+import com.example.pmswebportal.dto.EmployeeDetailReponse;
 import com.example.pmswebportal.dto.EmployeeProfile;
+import com.example.pmswebportal.dto.MyprofileReponse;
 import com.example.pmswebportal.dto.UpdatePassReponse;
 import com.example.pmswebportal.dto.UpdatePassReq;
 import com.example.pmswebportal.model.EmpServiceType;
@@ -38,6 +40,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -123,10 +127,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (fldEmpEmail != null && fldEmpEmail != "") {
             emplSearch.setFldEmpEmail(fldEmpEmail);
         }
-        if (fldAllowLogIn != null && fldAllowLogIn != "" && fldAllowLogIn != "All") {
+        if (fldAllowLogIn != null && fldAllowLogIn != "" && !"All".equals(fldAllowLogIn)) {
             emplSearch.setFldAllowLogIn(fldAllowLogIn);
         }
-        if (fldPreferredLang != null && fldPreferredLang != "" && fldPreferredLang != "All") {
+        if (fldPreferredLang != null && fldPreferredLang != "" && !"All".equals(fldPreferredLang)) {
             emplSearch.setFldPreferredLang(fldPreferredLang);
         }
         if (fldEmpStatus != null && fldEmpStatus != "") {
@@ -144,13 +148,29 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     @Transactional
-    public void registerEmployee(EmployeeDetail employeeDto) {
+    public EmployeeDetailReponse registerEmployee(EmployeeDetail employeeDto) {
         long number = employeeRepository.count() + 1;
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDto, employee);
 
+        EmployeeDetailReponse employeeDetailReponse = new EmployeeDetailReponse();
         if (employeeDto.getEmpPwd() != null && employeeDto.getEmpPwd() != "") {
+            HashMap<String, Object> policy = securityPolicyService.getSecurityPolicy();
+            if (policy.get("fldSecPBL").toString().toUpperCase().equals("YES")) {
+                List<SysSecpwdBlist> allBlist = sysSecpwdBlistService.getAllBlackListPass();
+                for (SysSecpwdBlist sysSecpwdBlist : allBlist) {
+                    if (sysSecpwdBlist.getFldName().equals(employeeDto.getEmpPwd())) {
+                        employeeDetailReponse.setStatus(false);
+                        employeeDetailReponse.setMessage("Cannot be in blacklist password");
+                        return employeeDetailReponse;
+                    }
+                }
+
+            }
+
             employee.setFldEmpPwd(new BCryptPasswordEncoder().encode(employeeDto.getEmpPwd()));
+        } else {
+            employee.setFldEmpPwd("");
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -161,10 +181,32 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setFldLastMDate(new Timestamp(new Date().getTime()));
         employee.setFldEmpNo(new StringBuilder("user").append(String.valueOf(number)).toString());
 
+        // set empty
+        employee.setFldEmpMobile("");
+        employee.setFldIsPatrolStaff("");
+        employee.setFldRespPersonTech("");
+        employee.setFldRespPersonNonTech("");
+        employee.setFldFuncSecurityGroup("");
+        employee.setFldDataSecurityGroup("");
+        employee.setFldHomePage("");
+        employee.setFldCompanyID(-1);
+        employee.setFldRole("");
+        employee.setFldVarchar01("");
+        employee.setFldVarchar02("");
+        employee.setFldVarchar03("");
+        employee.setFldVarchar04("");
+        employee.setFldVarchar05("");
+        employee.setFldLongtext01("");
+        employee.setFldLongtext02("");
+        employee.setFldComID("");
+
         employeeRepository.save(employee);
 
         // update empl service type
         processEmplServicesType(employeeDto);
+
+        employeeDetailReponse.setStatus(true);
+        return employeeDetailReponse;
 
     }
 
@@ -175,16 +217,45 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     @Transactional
-    public void updateEmployee(EmployeeDetail employeeDto) {
+    public EmployeeDetailReponse updateEmployee(EmployeeDetail employeeDto) {
+        EmployeeDetailReponse employeeDetailReponse = new EmployeeDetailReponse();
+        employeeDetailReponse.setStatus(true);
+
         Optional<Employee> employee = employeeRepository.findByFldEmpNo(employeeDto.getFldEmpNo());
         if (employee.isPresent()) {
             Employee employee2 = employee.get();
-            BeanUtils.copyProperties(employeeDto, employee2);
 
+            // check policy
+            HashMap<String, Object> policy = securityPolicyService.getSecurityPolicy();
+            if (employeeDto.getEmpPwd() != null && !employeeDto.getEmpPwd().equals("")) {
+                if (policy.get("fldSecPCP").toString().toUpperCase().equals("YES")
+                        && (int) policy.get("fldPwdMPRT") == 1) {
+                    boolean check = new BCryptPasswordEncoder().matches(employeeDto.getEmpPwd(),
+                            employee.get().getFldEmpPwd());
+                    if (check) {
+                        employeeDetailReponse.setStatus(false);
+                        employeeDetailReponse.setMessage("Do not reuse your old password");
+                        return employeeDetailReponse;
+                    }
+                }
+
+                if (policy.get("fldSecPBL").toString().toUpperCase().equals("YES")) {
+                    List<SysSecpwdBlist> allBlist = sysSecpwdBlistService.getAllBlackListPass();
+                    for (SysSecpwdBlist sysSecpwdBlist : allBlist) {
+                        if (sysSecpwdBlist.getFldName().equals(employeeDto.getEmpPwd())) {
+                            employeeDetailReponse.setStatus(false);
+                            employeeDetailReponse.setMessage("Cannot be in blacklist password");
+                            return employeeDetailReponse;
+                        }
+                    }
+
+                }
+            }
+
+            BeanUtils.copyProperties(employeeDto, employee2);
             if (employeeDto.getEmpPwd() != null && employeeDto.getEmpPwd() != "") {
                 employee2.setFldEmpPwd(new BCryptPasswordEncoder().encode(employeeDto.getEmpPwd()));
             }
-
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             CustomAccountDetail account = (CustomAccountDetail) authentication.getPrincipal();
             employee2.setFldEmpNameM(account.getUsername());
@@ -194,6 +265,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             // update empl service type
             processEmplServicesType(employeeDto);
         }
+        return employeeDetailReponse;
     }
 
     /**
@@ -226,8 +298,8 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param loginId
      * @param request
      */
-    @Transactional
     @Override
+    @Transactional
     public boolean sendEmailOtp(String loginId, HttpServletRequest request) {
         Employee employee = checkAuthenticated(loginId);
         if (employee == null)
@@ -243,13 +315,22 @@ public class EmployeeServiceImpl implements EmployeeService {
         SysOtp sysOtp = new SysOtp(loginId, String.valueOf(otp), Timestamp.valueOf(current.plusSeconds(countdownOtp)),
                 Timestamp.valueOf(current));
         sysOtpService.insertOTP(sysOtp);
-        // send mail
-        EmailDetail emailDetail = new EmailDetail();
-        emailDetail.setMsgBody(
-                String.format(AppConstants.OTP_MSG_BODY, String.valueOf(otp), String.valueOf(countdownOtp)));
-        emailDetail.setRecipient(employee.getFldEmpEmail());
-        emailDetail.setSubject(AppConstants.OTP_SUBJECT);
-        return mailUtil.sendSimpleMail(emailDetail);
+        ExecutorService es = Executors.newSingleThreadExecutor();
+        Runnable runnable = new Runnable() {
+            @Override            
+            public void run() {                
+                // send mail
+                EmailDetail emailDetail = new EmailDetail();
+                emailDetail.setMsgBody(
+                        String.format(AppConstants.OTP_MSG_BODY, String.valueOf(otp), String.valueOf(countdownOtp)));
+                emailDetail.setRecipient(employee.getFldEmpEmail());
+                emailDetail.setSubject(AppConstants.OTP_SUBJECT);
+                mailUtil.sendSimpleMail(emailDetail);
+            }
+        };
+        es.execute(runnable);
+        es.shutdown();
+        return true;
     }
 
     /**
@@ -258,9 +339,47 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param employee
      */
     @Override
-    public void updateProfile(EmployeeProfile employeeProfile) {
+    public MyprofileReponse updateProfile(EmployeeProfile employeeProfile) {
         Optional<Employee> employee = employeeRepository.findByFldEmpNo(employeeProfile.getFldEmpNo());
+        MyprofileReponse myProfileReponse = new MyprofileReponse();
         if (employee.isPresent()) {
+            if (employeeProfile.getEmpOldPwd() != null) {
+                boolean checkOldpwd = new BCryptPasswordEncoder().matches(employeeProfile.getEmpOldPwd(),
+                        employee.get().getFldEmpPwd());
+                if (!checkOldpwd) {
+                    myProfileReponse.setStatus(false);
+                    myProfileReponse.setMessage("Old password don't match");
+                    return myProfileReponse;
+                }
+            }
+
+            if (employeeProfile.getEmpNewPwd() != null) {
+                // check pass new không trùng password mới
+                HashMap<String, Object> policy = securityPolicyService.getSecurityPolicy();
+                if (policy.get("fldSecPCP").toString().toUpperCase().equals("YES")
+                        && (int) policy.get("fldPwdMPRT") == 1) {
+                    boolean check = new BCryptPasswordEncoder().matches(employeeProfile.getEmpNewPwd(),
+                            employee.get().getFldEmpPwd());
+                    if (check) {
+                        myProfileReponse.setStatus(false);
+                        myProfileReponse.setMessage("Do not reuse your old password");
+                        return myProfileReponse;
+                    }
+                }
+
+                if (policy.get("fldSecPBL").toString().toUpperCase().equals("YES")) {
+                    List<SysSecpwdBlist> allBlist = sysSecpwdBlistService.getAllBlackListPass();
+                    for (SysSecpwdBlist sysSecpwdBlist : allBlist) {
+                        if (sysSecpwdBlist.getFldName().equals(employeeProfile.getEmpNewPwd())) {
+                            myProfileReponse.setStatus(false);
+                            myProfileReponse.setMessage("Cannot be in blacklist password");
+                            return myProfileReponse;
+                        }
+                    }
+
+                }
+            }
+
             Employee employee2 = employee.get();
             BeanUtils.copyProperties(employeeProfile, employee2);
 
@@ -273,7 +392,9 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee2.setFldEmpNameM(account.getUsername());
             employee2.setFldLastMDate(new Timestamp(new Date().getTime()));
             employeeRepository.save(employee2);
+            myProfileReponse.setStatus(true);
         }
+        return myProfileReponse;
     }
 
     @Override
@@ -295,38 +416,37 @@ public class EmployeeServiceImpl implements EmployeeService {
         Timestamp current = Timestamp.valueOf(LocalDateTime.now());
         if (current.after(sysOtp.getFldExpiryDateTime())) {
             updatePassReponse.setStatus(false);
-            updatePassReponse.setMessage("Expired OPT");
+            updatePassReponse.setMessage("Expired OTP");
             return updatePassReponse;
         }
 
-        if(!sysOtp.getFldOTP().equals(info.getOtp())){
+        if (!sysOtp.getFldOTP().equals(info.getOtp())) {
             updatePassReponse.setStatus(false);
             updatePassReponse.setMessage("OTP is incorrect");
             return updatePassReponse;
         }
-        
+
         HashMap<String, Object> policy = securityPolicyService.getSecurityPolicy();
         if (policy.get("fldSecPCP").toString().toUpperCase().equals("YES") && (int) policy.get("fldPwdMPRT") == 1) {
             boolean check = new BCryptPasswordEncoder().matches(info.getPassword(), employee.getFldEmpPwd());
             if (check) {
                 updatePassReponse.setStatus(false);
-                updatePassReponse.setMessage("Cannot be the same as pervious");
+                updatePassReponse.setMessage("Do not reuse your old password");
                 return updatePassReponse;
             }
         }
-        if (policy.get("fldSecPCP").toString().toUpperCase().equals("YES")
-                && policy.get("fldSecPCP").toString().toUpperCase().equals("YES")) {
+        if (policy.get("fldSecPBL").toString().toUpperCase().equals("YES")) {
             List<SysSecpwdBlist> allBlist = sysSecpwdBlistService.getAllBlackListPass();
             for (SysSecpwdBlist sysSecpwdBlist : allBlist) {
                 if (sysSecpwdBlist.getFldName().equals(info.getPassword())) {
                     updatePassReponse.setStatus(false);
-                    updatePassReponse.setMessage("Cannot be in black list password");
+                    updatePassReponse.setMessage("Cannot be in blacklist password");
                     return updatePassReponse;
                 }
             }
 
         }
-        //save pass
+        // save pass
         employee.setFldEmpPwd(new BCryptPasswordEncoder().encode(info.getPassword()));
         employeeRepository.save(employee);
         updatePassReponse.setStatus(true);

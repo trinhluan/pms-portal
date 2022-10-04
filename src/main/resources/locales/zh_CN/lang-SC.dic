@@ -1,12 +1,96 @@
-Forgot PassWord	Forgot PassWord-SC
-Login ID	Login ID-SC
-Please input your Login ID!	Please input your Login ID-SC!
-Send OTP	Send OTP-SC
-New Password	New Password-SC
-Re-input Password	Re-input Password-SC
-OTP	OTP-SC
-Opt will expire in	Opt will expire in-SC
-field is required	field is required-SC
-The two passwords that you entered do not match!	The two passwords that you entered do not match!-SC
-user not exist	user not exist-SC
-Field can not be empty	Field can not be empty-SC
+Forgot PassWord	忘记密码
+Login ID	登录ID
+Please input your Login ID!	请输入您的登录ID！
+Send OTP	发送一次性密码
+Re-input Password	重新输入密码
+OTP	OTP
+Opt will expire in	Opt 将在
+field is required	字段是必需的
+The two passwords that you entered do not match!	您输入的两个密码不匹配！
+user not exist	用户不存在
+Field can not be empty	字段不能为空
+Search Criteria	搜索条件
+Primary Login Site Code	主登录站点代码
+Allow Login	允许登录
+Login Name	登录名
+Language	语
+User Name	用户名
+Status	地位
+Email Account	电子邮件帐户
+Search	搜索
+Reset	重置
+Edit	编辑
+Is Technician	是技术员
+Is Patrol Staff	是巡逻人员
+Email	电子邮件
+Preferred Language	首选语言
+Home Page	主页
+Old Password	旧密码
+New Password	新密码
+Confirm Password	确认密码
+Save	節省
+Quit	退出
+User Profile Maintenance	用户资料维护
+Site Code	站点代码
+Respon. Person (Technical)	回应。 人（技术）
+Respon. Person (Non-Technical)	回应。 人（非技术）
+Service Type(s) For Assignment	分配的服务类型
+Function Security Group	功能安全组
+Data Security Group	数据安全组
+Created At/By	创建于/由
+Changed At/By	更改于/由
+Save & New	保存并新建
+User not exist	用户不存在
+OPT not found	未找到选择权
+Expired OTP	过期的一次性密码
+OTP is incorrect	OTP 不正确
+Cannot be in blacklist password	不能在黑名单密码
+Do not reuse your old password	不要重复使用旧密码
+Must be 8 characters or more	必须是 8 个字符或更多
+Must contain atleast one UPPER CASE character	必须包含至少一个大写字符
+Must contain atleast one LOWER CASE character	必须包含至少一个小写字符
+Must contain atleast one digit character	必须包含至少一位数字字符
+Must contain atleast one special character	必须包含至少一个特殊字符
+Do not use your Login ID as password	不要使用您的登录 ID 作为密码
+Work Order	工作指示																			
+Enquiry Maintenance	查询维护
+Scheduled Work Order Maintenance	计划工单维护
+Scheduled Work Order Maintenance in Yearly View	年度视图中的计划工单维护
+Work Order Maintenance	工单维护
+Work Order Audit	工单审核
+Patrol	巡逻
+Question Pool Maintenance	题库维护
+Patrol Form Maintenance	巡查表维护
+Patrol Assignment Maintenance	巡逻任务维护
+Stock	库存
+Stock Master Maintenance	库存主维护
+Stock In	进货
+Stocktake	盘点
+Reports	报告
+Stock Balance Report	库存余额报告
+Stock Movement Report	股票走势报告
+Work Order by Service Type Report	按服务类型报告的工单
+Work Order Manpower Report	工单人力报告
+Complaint Analysis Report	投诉分析报告
+Expense Enquiry	费用查询
+Patrol Q&A Comparative Matrix	巡逻问答比较矩阵
+Administration	行政
+System Param Maintenance	系统参数维护
+Function Security Group Maintenance	功能安全组维护
+Data Security Group Maintenance	数据安全组维护
+User Profile Maintenance	用户资料维护
+Building Maintenance	建筑维修
+Floor Unit Maintenance	地板单元维护
+Tenant Maintenance	租户维护
+Service Type Maintenance	服务类型维护
+Channel Maintenance	渠道维护
+Work Order Overdue Maintenance	工单逾期维护
+Device Registration Maintenance	设备注册维护
+My Profile	我的简历
+Logout	登出
+Home	家
+OTP	一次性密码
+Account Login	帐号登录
+Password	密码
+Login	登录
+Must be 6 characters	必须是 6 个字符

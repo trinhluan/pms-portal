@@ -4,6 +4,7 @@
 }
 
 
+
 /* home page */
 .col-left,
 .col-right {
@@ -357,14 +358,6 @@ a {
   border-right: 1px solid white;
 }
 
-.txt-search {
-  width: 80%;
-}
-
-.sel-search {
-  width: 80% !important;
-}
-
 .table-parent {
   width: 100%;
 }
@@ -432,7 +425,7 @@ a {
   text-transform: uppercase;
 }
 
-.wrap-login .ant-form-item-control-input-content {
+.wrap-login .input .ant-form-item-control-input-content {
   width: 100%;
   position: relative;
   background-color: #fff;
@@ -495,6 +488,10 @@ input {
   --background-color: #16bcb5;
 }
 
+.btn {
+  background: var(--background-color);
+  padding: 0 10px;
+}
 
 .focus-input100 {
   position: absolute;
@@ -573,6 +570,11 @@ input {
 }
 
 
+.App>.container {
+  padding-bottom: 50px;
+  ;
+}
+
 .container {
   max-width: var(--container-max-width);
   width: var(--container-width);
@@ -580,10 +582,11 @@ input {
 }
 
 .footer {
-  position: absolute;
-  bottom: 0;
+  position: fixed;
+  bottom: 0px;
   width: 100%;
   height: 40px;
+  margin-top: 20px;
   /* Height of the footer */
   background: #232c3b;
 }
@@ -730,6 +733,15 @@ input {
   color: white;
 }
 
+.wrap-border {
+  border: 1px solid #dbdbdb;
+  margin-top: 50px;
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+}
+
 /* Search screen */
 .search-criteria {
   border: 1px solid #dbdbdb;
@@ -798,9 +810,4 @@ input {
   background: var(--background-color);
   margin-top: 5px;
   color: white;
-}
-
-.msg-save {
-  color: red;
-  padding-bottom: 10px;
 }

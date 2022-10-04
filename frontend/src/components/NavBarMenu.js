@@ -8,15 +8,15 @@ import i18next from 'i18next';
 
 function NavBarMenu() {
   const {user, signout} = useAuth();
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [language, setLanguage] = useState(user?.employee?.fldPreferredLang);
 
   const menu = [{
     name: t('Work Order'),
-    url: '232',
+
     subMenu: [{
       name: t('Enquiry Maintenance'),
-      url: '/ddd'
+      url: '#'
     },
     {
       name: t('Scheduled Work Order Maintenance'),
@@ -37,7 +37,7 @@ function NavBarMenu() {
   },
   {
     name: t('Patrol'),
-    url: '232',
+
     subMenu: [{
       name: t('Question Pool Maintenance'),
       url: '#'
@@ -53,7 +53,7 @@ function NavBarMenu() {
   },
   {
     name: t('Stock'),
-    url: '232',
+
     subMenu: [{
       name: t('Stock Master Maintenance'),
       url: '#'
@@ -69,7 +69,7 @@ function NavBarMenu() {
   },
   {
     name: t('Reports'),
-    url: '232',
+
     subMenu: [{
       name: t('Stock Balance Report'),
       url: '#'
@@ -101,7 +101,7 @@ function NavBarMenu() {
   },
   {
     name: t('Administration'),
-    url: '232',
+
     subMenu: [{
       name: t('System Param Maintenance'),
       url: '#'
@@ -148,7 +148,7 @@ function NavBarMenu() {
     },
     {
       name: t('My Profile'),
-      url: '#'
+      url: '/myProfile'
     }]
   }]
   return (
@@ -194,8 +194,10 @@ function NavBarMenu() {
               <div style={{ display: 'flex', height: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Select options={LANGUAGE.filter((_, idx)=> idx !== 0)} value={language} onChange={(value) => {
-                    setLanguage(value)
-                  i18next.changeLanguage(value);
+                    setLanguage(value);
+                    i18next.reloadResources().then(()=>{
+                      i18next.changeLanguage(value);
+                    });
                 }}>
                   </Select>
                 </div>

@@ -41,7 +41,7 @@ public class TranslationServiceImpl implements TranslationService {
         String dir = String.format(AppConstants.TRANSLATION_DIR_FORMAT, folder, fileName);
         // read file from resource
         InputStream inputStream = streamUtil.readFileInResources(dir);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
         try {
             while (reader.ready()) {
                 String line = reader.readLine();

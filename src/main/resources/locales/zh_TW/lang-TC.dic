@@ -1,12 +1,96 @@
-Forgot PassWord	Forgot PassWord-TC
-Login ID	Login ID-TC
-Please input your Login ID!	Please input your Login ID-TC!
-Send OTP	Send OTP-TC
-New Password	New Password-TC
-Re-input Password	Re-input Password-TC
-OTP	OTP-TC
-Opt will expire in	Opt will expire in-TC
-field is required	field is required-TC
-The two passwords that you entered do not match!	The two passwords that you entered do not match!-TC
-user not exist	user not exist-TC
-Field can not be empty	Field can not be empty-TC
+Forget PassWord	忘記密碼
+Login ID	登錄ID
+Please input your Login ID!	請輸入您的登錄ID！
+Send OTP	發送一次性密碼
+Re-input Password	重新輸入密碼
+OTP	OTP
+Opt will expire in	Opt 將在
+field is required	字段是必需的
+The two passwords that you entered do not match!	您輸入的兩個密碼不匹配！
+user not exist	用戶不存在
+Field can not be empty	字段不能為空
+Search Criteria	搜索條件
+Primary Login Site Code	主登錄站點代碼
+Allow Login	允許登錄
+Login Name	登錄名
+Language	語
+User Name	用戶名
+Status	地位
+Email Account	電子郵件帳戶
+Search	搜索
+Reset	重置
+Edit	編輯
+Is Technician	是技術員
+Is Patrol Staff	是巡邏人員
+Email	電子郵件
+Preferred Language	首選語言
+Home Page	主頁
+Old Password	舊密碼
+New Password	新密碼
+Confirm Password	確認密碼
+Save	節省
+Quit	退出
+User Profile Maintenance	用戶資料維護
+Site Code	站點代碼
+Respon. Person (Technical)	回應。 人（技術）
+Respon. Person (Non-Technical)	回應。 人（非技術）
+Service Type(s) For Assignment	分配的服務類型
+Function Security Group	功能安全組
+Data Security Group	數據安全組
+Created At/By	創建於/由
+Changed At/By	更改於/由
+Save & New	保存並新建
+User not exist	用戶不存在
+OPT not found	未找到選擇權
+Expired OTP	已過期的 OTP
+OTP is incorrect	OTP 不正確
+Cannot be in blacklist password	不能在黑名單密碼
+Do not reuse your old password	不要重複使用舊密碼
+Must be 8 characters or more	必須是 8 個字符或更多
+Must contain atleast one UPPER CASE character	必須包含至少一個大寫字符
+Must contain atleast one LOWER CASE character	必須包含至少一個小寫字符
+Must contain atleast one digit character	必須包含至少一位數字字符
+Must contain atleast one special character	必須包含至少一個特殊字符
+Do not use your Login ID as password	不要使用您的登錄 ID 作為密碼
+Work Order	工作指示
+Enquiry Maintenance	查詢維護
+Scheduled Work Order Maintenance	計劃工單維護
+Scheduled Work Order Maintenance in Yearly View	年度視圖中的計劃工單維護
+Work Order Maintenance	工單維護
+Work Order Audit	工單審核
+Patrol	巡邏
+Question Pool Maintenance	題庫維護
+Patrol Form Maintenance	巡查表維護
+Patrol Assignment Maintenance	巡邏任務維護
+Stock	庫存
+Stock Master Maintenance	庫存主維護
+Stock In	進貨
+Stocktake	盤點
+Reports	報告
+Stock Balance Report	庫存餘額報告
+Stock Movement Report	股票走勢報告
+Work Order by Service Type Report	按服務類型報告的工單
+Work Order Manpower Report	工單人力報告
+Complaint Analysis Report	投訴分析報告
+Expense Enquiry	費用查詢
+Patrol Q&A Comparative Matrix	巡邏問答比較矩陣
+Administration	行政
+System Param Maintenance	系統參數維護
+Function Security Group Maintenance	功能安全組維護
+Data Security Group Maintenance	數據安全組維護
+User Profile Maintenance	用戶資料維護
+Building Maintenance	建築維修
+Floor Unit Maintenance	地板單元維護
+Tenant Maintenance	租戶維護
+Service Type Maintenance	服務類型維護
+Channel Maintenance	渠道維護
+Work Order Overdue Maintenance	工單逾期維護
+Device Registration Maintenance	設備註冊維護
+My Profile	我的簡歷
+Logout	登出
+Home	家
+OTP	一次性密碼
+Account Login	帳號登錄
+Password	密碼
+Login	登錄
+Must be 6 characters	必須是 6 個字符

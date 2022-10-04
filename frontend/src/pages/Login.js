@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Row, Col } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Form, Button, Checkbox } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'antd/lib/form/Form';
 import { useAuth } from '../AuthContext';
 import { useTranslation } from 'react-i18next';
-
-
+import i18next from 'i18next';
 
 function Login() {
   const { t } = useTranslation()
@@ -14,6 +13,9 @@ function Login() {
   const auth = useAuth();
   const [error, setError] = useState('');
 
+  useEffect(()=>{
+    i18next.changeLanguage('en');
+  },[])
   return (
     <>
       <div className='container-login'>
@@ -21,10 +23,19 @@ function Login() {
             form={form}
             name="nest-messages"
             onFinish={(values) => {
-              auth.signin(values.loginId, values.password, (data) => {
+              const data = new FormData()
+              data.append('username',values.loginId)
+              data.append('password',values.password)
+              data.append('remember-me', values.remember);
+
+              auth.signin(data, (data) => {
                 if (data.error) {
                   setError(t(data.error.message));
                 } else {
+                  i18next.reloadResources()
+                      .then(() => {
+                        i18next.changeLanguage(data.employee.fldPreferredLang);
+                      });
                   navigate('/', { replace: true });
                 }
               });
@@ -44,27 +55,29 @@ function Login() {
           </span>
           <div class='m-b-36'>
             <Form.Item
+                    className='input'
                     name="loginId"
                     rules={[
                       {
                         required: true,
-                        message: t('Field cannot be empty')
+                        message: t('field is required')
                       }
                     ]}
                   >
               <input className='input100'/>
             </Form.Item>
           </div>
-          <span class='txt1 p-b-11'>
+          <span class='txt1 p-b-11 required'>
             {t('Password')}
           </span>
           <div class='m-b-36'>
             <Form.Item
+             className='input'
                     name="password"
                     rules={[
                       {
                         required: true,
-                        message: t('Field cannot be empty')
+                        message: t('field is required')
                       }
                     ]}
                   >
@@ -72,13 +85,16 @@ function Login() {
             </Form.Item>
           </div>
 
-
             <div className='flex-sb-m w-full p-b-48'>
               <div className="contact100-form-checkbox">
-                <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me"/>
-                <label class="label-checkbox100" for="ckb1">
-                Remember me
-                </label>
+              <Form.Item
+            name="remember"
+            className="mb-0 text-center"
+            valuePropName="checked"
+            initialValue={false}
+          >
+            <Checkbox>{t('Remember me')}</Checkbox>
+          </Form.Item>
 </div>
 <div>
 <Link to="/passwordReissue">{t('Forget Password')}</Link>

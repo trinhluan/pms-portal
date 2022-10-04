@@ -1,14 +1,22 @@
+import { t } from "i18next";
+
 export const ALLOW_LOGIN = [
   ['All', 'All'],
   ['Yes', 'Yes'],
   ['No', 'No']
 ].map((o) => ({ value: o[0], label: o[1] }));
 
+export const LANG_DIC = {
+  'en' : 'English',
+  'zh_TW' : '繁體中文',
+  'zh_CN' : '简体中文'
+}
+
 export const LANGUAGE = [
   ['All', 'All'],
-  ['en', 'English'],
-  ['zh_TW', '繁體中文'],
-  ['zh_CN', '简体中文']
+  ['en', LANG_DIC['en']],
+  ['zh_TW', LANG_DIC['zh_TW']],
+  ['zh_CN', LANG_DIC['zh_CN']]
 ].map((o) => ({ value: o[0], label: o[1] }));
 
 export const STATUS = [
@@ -24,16 +32,11 @@ export const YES_NO_CONST = [
   ['No', 'No']
 ].map((o) => ({ value: o[0], label: o[1] }));
 
-export const LANGUAGE_EDIT = [
-  ['English', 'English'],
-  ['繁體中文', '繁體中文'],
-  ['简体中文', '简体中文']
-].map((o) => ({ value: o[0], label: o[1] }));
-
 export const HOME_PAGE = [
-  ['MyProfile', 'My Profile'],
-  ['EnquiryMaintenance', 'Enquiry Maintenance'],
-  ['WorkOrderMaintenance', 'Work Order Maintenance'],
-  ['PatrolAssignmentMaintenance', 'Patrol Assignment Maintenance'],
-  ['Dashboard', 'Dashboard']
+  ['#', '----'],
+  ['/myProfile', 'My Profile'],
+  ['#', 'Enquiry Maintenance'],
+  ['#', 'Work Order Maintenance'],
+  ['#', 'Patrol Assignment Maintenance'],
+  ['#', 'Dashboard']
 ].map((o) => ({ value: o[0], label: o[1] }));

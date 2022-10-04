@@ -24,12 +24,7 @@ public class SiteController extends BaseController {
     @PostMapping("getpropertiesofsite")
     ResponseEntity<?> getPropertiesOfSite()  {
         HashMap<String,Object>allProperties = new HashMap<>();
-        try {
-            allProperties = siteService.getAllPropertiesOfSite();
-        } catch (Exception e) {
-            // Luan: TODO
-            e.printStackTrace();
-        }
+        allProperties = siteService.getAllPropertiesOfSite();
         return new ResponseEntity<>(allProperties, HttpStatus.OK);
     }
 

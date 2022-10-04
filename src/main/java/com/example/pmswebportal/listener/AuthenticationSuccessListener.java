@@ -1,6 +1,5 @@
 package com.example.pmswebportal.listener;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -44,17 +43,19 @@ public class AuthenticationSuccessListener implements ApplicationListener<Authen
             CustomAccountDetail account = (CustomAccountDetail) event.getAuthentication().getPrincipal();
             loginAttemptService.loginSucceeded(account.getUsername());
             System.out.println(entityManager);
-            DateTimeFormatter  dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
             String tableName = String.format("tblsysaccesslog%s", String.valueOf(LocalDate.now().getYear()));
-            entityManager.createNativeQuery(String.format("INSERT INTO %s (fldEmpNo, fldEmpName, fldHost, fldAction, fldAuditLog, fldDateTime) values(?,?,?,?,?,?)", tableName))
-                .setParameter(1, account.getUsername())
-                .setParameter(2, account.getEmployee().getFldEmpName())
-                .setParameter(3, HttpReqRespUtils.getClientIpAddress())
-                .setParameter(4, "Login")
-                .setParameter(5, dateTimeFormatter.format(LocalDateTime.now()))
-                .setParameter(6, Timestamp.valueOf(LocalDateTime.now()), TemporalType.TIMESTAMP)
-                .executeUpdate();
+            entityManager.createNativeQuery(String.format(
+                    "INSERT INTO %s (fldEmpNo, fldEmpName, fldHost, fldAction, fldAuditLog, fldDateTime) values(?,?,?,?,?,?)",
+                    tableName))
+                    .setParameter(1, account.getUsername())
+                    .setParameter(2, account.getEmployee().getFldEmpName())
+                    .setParameter(3, HttpReqRespUtils.getClientIpAddress())
+                    .setParameter(4, "Login")
+                    .setParameter(5, dateTimeFormatter.format(LocalDateTime.now()))
+                    .setParameter(6, Timestamp.valueOf(LocalDateTime.now()), TemporalType.TIMESTAMP)
+                    .executeUpdate();
         }
     }
 }

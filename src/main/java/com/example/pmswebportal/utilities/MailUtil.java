@@ -29,25 +29,18 @@ public class MailUtil {
      * @return
      */
     public boolean sendSimpleMail(EmailDetail emailDetail) {
-        try {
+        // Creating a simple mail message
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
 
-            // Creating a simple mail message
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
+        // Setting up necessary details
+        mailMessage.setFrom(sender);
+        mailMessage.setTo(emailDetail.getRecipient());
+        mailMessage.setText(emailDetail.getMsgBody());
+        mailMessage.setSubject(emailDetail.getSubject());
 
-            // Setting up necessary details
-            mailMessage.setFrom(sender);
-            mailMessage.setTo(emailDetail.getRecipient());
-            mailMessage.setText(emailDetail.getMsgBody());
-            mailMessage.setSubject(emailDetail.getSubject());
-
-            // Sending the mail
-            javaMailSender.send(mailMessage);
-            return true;
-        }
-        // Catch block to handle the exceptions
-        catch (Exception e) {
-            return false;
-        }
+        // Sending the mail
+        javaMailSender.send(mailMessage);
+        return true;
     }
 
 }

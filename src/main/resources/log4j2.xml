@@ -2,7 +2,7 @@
 <Configuration>
     <Properties>
         <Property name="patternLayout">%d{yyyy-MM-dd HH:mm:ss a} %-5level [%t] %logger{36}.%M : %msg%n</Property>
-        <Property name="logPath">d:/</Property>
+        <Property name="logPath">C:/ErrorLog</Property>
     </Properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
@@ -22,10 +22,12 @@
             <Policies />
         </RollingFile> -->
         <RollingFile name="FileError" fileName="${logPath}/error.log"
-                     filePattern="${logPath}/$${date:yyyy-MM}/%d{dd}/error.%i.log">
+                     filePattern="${logPath}/ErrorLog-%d{yy-MM-dd}.txt">
             <PatternLayout pattern="${patternLayout}"/>
             <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
-            <Policies />
+            <Policies >
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
         </RollingFile>
     </Appenders>
 </Configuration>

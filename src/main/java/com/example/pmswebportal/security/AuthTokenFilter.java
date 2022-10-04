@@ -4,12 +4,7 @@ package com.example.pmswebportal.security;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.pmswebportal.services.LoginAttemptService;
@@ -28,14 +23,6 @@ import java.util.Collections;
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
 
-    private static final int BEARER_INDEX = 7;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    private AccountDetailsService userDetailsService;
-
     @Autowired
     private LoginAttemptService loginAttemptService;
 
@@ -45,7 +32,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         HttpServletRequest passedRequest = request;
 
-        if (request.getRequestURI().contains("api/login")) {
+        if (request.getRequestURI().contains("/login")) {
             passedRequest = new MyHttpServletRequestWrapper(request);
             String loginId = readLoginIdFromRequest(passedRequest);
             if (Strings.isNotEmpty(loginId) && loginAttemptService.isBlocked(loginId)) {
@@ -57,18 +44,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 response.flushBuffer();
                 return;
             }
-        }  else {
-            validateFilter(request, response);
         }
         filterChain.doFilter(passedRequest, response);
-    }
-
-    private String parseJwt(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(BEARER_INDEX, headerAuth.length());
-        }
-        return null;
     }
 
     private String readLoginIdFromRequest(HttpServletRequest request) throws IOException {
@@ -81,18 +58,5 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             }
         }
         return Strings.EMPTY;
-    }
-
-
-    private void validateFilter(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String token = parseJwt(request);
-        if (token != null && jwtTokenProvider.validateJwtToken(token)) {
-            String userName = jwtTokenProvider.getUserNameFromJwtToken(token);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities());
-            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(auth);
-        }
     }
 }

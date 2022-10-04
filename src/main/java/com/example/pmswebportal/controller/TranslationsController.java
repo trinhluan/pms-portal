@@ -1,5 +1,6 @@
 package com.example.pmswebportal.controller;
 
+import java.io.FileNotFoundException;
 import java.util.Hashtable;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +19,9 @@ public class TranslationsController extends BaseController {
     private TranslationService translationService;
 
     @GetMapping("translations")
-    ResponseEntity<?> translations(@RequestParam String locale) {
+    ResponseEntity<?> translations(@RequestParam String locale) throws FileNotFoundException, Exception {
         Hashtable<String, String> translate = new Hashtable<String, String>();
-        try {
-            translate = translationService.getTranslation(locale);
-        } catch (Exception e) {
-            // Luan: TODO
-            e.printStackTrace();
-        }
+        translate = translationService.getTranslation(locale);
         return new ResponseEntity<>(translate, HttpStatus.OK);
     }
 }

@@ -4,6 +4,7 @@ import { Form,  Button, } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { forgotPasswordService } from '../service/forgotPasswordService';
 import $ from 'jquery';
+import i18next from 'i18next';
 
 
 const STATUS = {
@@ -22,6 +23,10 @@ function ForgetPassword() {
   const goToLogin= ()=> {
     navigate("/login");
   }
+
+  useEffect(()=>{
+    i18next.changeLanguage('en');
+  },[])
 
   
 
@@ -87,11 +92,12 @@ function ForgetPassword() {
             </span>
             <div class='m-b-36'>
               <Form.Item
+              className='input'
                 name="loginId"
                 rules={[
                   {
                     required: true,
-                    message: t('login.acc') + t('share.error.notEntered')
+                    message: t('field is required')
                   }
                 ]}
               >
@@ -136,10 +142,11 @@ function ForgetPassword() {
                   <div class='m-b-36'>
                     <Form.Item
                       name="newPassword"
+                      className='input'
                       rules={[
                         {
                           required: true,
-                          message: t('login.acc') + t('share.error.notEntered')
+                          message: t('field is required')
                         },
                         forgotPasswordService.validatorPassword
                       ]}
@@ -154,10 +161,11 @@ function ForgetPassword() {
                   <div class='m-b-36'>
                     <Form.Item
                       name="reInputPassword"
+                      className='input'
                       rules={[
                         {
                           required: !passwordIsEmpty,
-                          message: t('login.acc') + t('share.error.notEntered')
+                          message: t('field is required')
                         },
                         validatorRePass
                       ]}
@@ -172,17 +180,18 @@ function ForgetPassword() {
                   <div class='m-b-36'>
                     <Form.Item
                       name="otp"
+                      className='input'
                       rules={[
                         {
                           required: true,
-                          message: t('login.acc') + t('share.error.notEntered')
+                          message: t('field is required')
                         },
                         {
                           min: 6,
-                          message: "min 6",
+                          message: "Must be 6 characters",
                         }, {
                           max: 6,
-                          message: "max 6",
+                          message: "Must be 6 characters",
                         }, validatorIsNumber
                       ]}
                     >

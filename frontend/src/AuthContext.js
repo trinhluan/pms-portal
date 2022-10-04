@@ -37,8 +37,8 @@ export default function AuthProvider({ children }) {
     }
   });
 
-  let signin = (newUser, pass, callback) => {
-    authenticateService.login(newUser, pass, (data) => {
+  let signin = (param, callback) => {
+    authenticateService.login(param, (data) => {
       if (!data.error) {
         const user = { ...data };
         setUser(user);
